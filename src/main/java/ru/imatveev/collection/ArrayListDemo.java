@@ -201,7 +201,7 @@ public class ArrayListDemo<E> implements ListDemo<E> {
             return new Object[]{};
         } else {
             Object[] newData = new Object[size];
-            System.arraycopy(newData, 0, data, 0, size);
+            System.arraycopy(data, 0, newData, 0, size);
             return newData;
         }
     }
