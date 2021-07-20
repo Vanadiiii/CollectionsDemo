@@ -3,18 +3,18 @@ package ru.imatveev.collection;
 import java.util.Arrays;
 
 @SuppressWarnings("unchecked")
-public class ArrayListDemo<E> implements ListDemo<E> {
+public class ArrayList<E> implements List<E> {
     private Object[] data;
     private int size;
 
     private final Object[] INITIAL_ARRAY_DATA = new Object[10];
 
-    public ArrayListDemo() {
+    public ArrayList() {
         this.data = INITIAL_ARRAY_DATA;
         this.size = 0;
     }
 
-    ArrayListDemo(int size) {
+    ArrayList(int size) {
         if (size < 0) {
             throw new RuntimeException("Size must be positive number");
         }
@@ -22,7 +22,7 @@ public class ArrayListDemo<E> implements ListDemo<E> {
         this.size = 0;
     }
 
-    ArrayListDemo(CollectionDemo<E> collection) {
+    ArrayList(Collection<E> collection) {
         this.size = collection.size();
         if (size != 0) {
             for (int i = 0; i < size; i++) {
@@ -58,7 +58,7 @@ public class ArrayListDemo<E> implements ListDemo<E> {
     }
 
     @Override
-    public boolean addAll(CollectionDemo<? extends E> collection) {
+    public boolean addAll(Collection<? extends E> collection) {
         if (collection.isEmpty()) {
             return false;
         }
@@ -74,7 +74,7 @@ public class ArrayListDemo<E> implements ListDemo<E> {
     }
 
     @Override
-    public boolean addAll(int index, CollectionDemo<? extends E> collection) {
+    public boolean addAll(int index, Collection<? extends E> collection) {
         int collectionSize = collection.size();
         if (collectionSize == 0) {
             return false;
@@ -105,7 +105,7 @@ public class ArrayListDemo<E> implements ListDemo<E> {
     }
 
     @Override
-    public boolean removeAll(CollectionDemo<?> collection) {
+    public boolean removeAll(Collection<?> collection) {
         if (collection.isEmpty()) {
             return false;
         }
@@ -121,7 +121,7 @@ public class ArrayListDemo<E> implements ListDemo<E> {
     }
 
     @Override
-    public boolean retainAll(CollectionDemo<?> collection) {
+    public boolean retainAll(Collection<?> collection) {
         if (collection.isEmpty()) {
             return false;
         }
@@ -222,7 +222,7 @@ public class ArrayListDemo<E> implements ListDemo<E> {
     }
 
     @Override
-    public boolean containsAll(CollectionDemo<?> collection) {
+    public boolean containsAll(Collection<?> collection) {
         Object[] data = collection.toArray();
         for (int i = 0; i < collection.size(); i++) {
             if (!contains(data[i])) {

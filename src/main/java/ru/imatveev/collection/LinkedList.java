@@ -4,18 +4,18 @@ import java.util.Arrays;
 import java.util.Objects;
 
 @SuppressWarnings("unchecked")
-public class LinkedListDemo<E> implements ListDemo<E> {
+public class LinkedList<E> implements List<E> {
     private int size;
     private Node<E> first;
     private Node<E> last;
 
-    public LinkedListDemo() {
+    public LinkedList() {
         first = new Node<>(null, null, last);
         last = new Node<>(first, null, null);
         this.size = 0;
     }
 
-    public LinkedListDemo(CollectionDemo<E> collection) {
+    public LinkedList(Collection<E> collection) {
         this();
         this.addAll(collection);
     }
@@ -55,7 +55,7 @@ public class LinkedListDemo<E> implements ListDemo<E> {
     }
 
     @Override
-    public boolean containsAll(CollectionDemo<?> collection) {
+    public boolean containsAll(Collection<?> collection) {
         Object[] objects = collection.toArray();
         for (Object object : objects) {
             if (!contains(object)) {
@@ -67,7 +67,7 @@ public class LinkedListDemo<E> implements ListDemo<E> {
     }
 
     @Override
-    public boolean addAll(CollectionDemo<? extends E> collection) {
+    public boolean addAll(Collection<? extends E> collection) {
         if (collection.isEmpty()) {
             return false;
         }
@@ -79,12 +79,12 @@ public class LinkedListDemo<E> implements ListDemo<E> {
     }
 
     @Override
-    public boolean removeAll(CollectionDemo<?> collection) {
+    public boolean removeAll(Collection<?> collection) {
         return false;
     }
 
     @Override
-    public boolean retainAll(CollectionDemo<?> collection) {
+    public boolean retainAll(Collection<?> collection) {
         return false;
     }
 
@@ -134,8 +134,8 @@ public class LinkedListDemo<E> implements ListDemo<E> {
     }
 
     @Override
-    public boolean addAll(int index, CollectionDemo<? extends E> collection) {
-        LinkedListDemo<E> list = new LinkedListDemo<>((CollectionDemo<E>) collection);
+    public boolean addAll(int index, Collection<? extends E> collection) {
+        LinkedList<E> list = new LinkedList<>((Collection<E>) collection);
         Node<E> node = getNode(index);
         Node<E> beforeNode = node.prev;
         Node<E> last = list.last.prev;

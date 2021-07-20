@@ -1,8 +1,8 @@
 package ru.imatveev.collection;
 
-public interface ListDemo<E> extends CollectionDemo<E> {
+public interface List<E> extends Collection<E> {
 
-    boolean addAll(int index, CollectionDemo<? extends E> c);
+    boolean addAll(int index, Collection<? extends E> c);
 
     E set(int index, E element);
 

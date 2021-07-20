@@ -1,6 +1,6 @@
 package ru.imatveev.collection;
 
-public interface CollectionDemo<E> {
+public interface Collection<E> {
     int size();
 
     boolean isEmpty();
@@ -11,13 +11,13 @@ public interface CollectionDemo<E> {
 
     boolean remove(Object element);
 
-    boolean containsAll(CollectionDemo<?> var1);
+    boolean containsAll(Collection<?> var1);
 
-    boolean addAll(CollectionDemo<? extends E> var1);
+    boolean addAll(Collection<? extends E> var1);
 
-    boolean removeAll(CollectionDemo<?> var1);
+    boolean removeAll(Collection<?> var1);
 
-    boolean retainAll(CollectionDemo<?> var1);
+    boolean retainAll(Collection<?> var1);
 
     void clear();
 
