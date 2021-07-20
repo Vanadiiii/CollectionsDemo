@@ -53,7 +53,7 @@ public class ArrayListDemo<E> implements ListDemo<E> {
         }
 
         data[size] = element;
-        ++size;
+        size = size + 1;
         return true;
     }
 
@@ -75,17 +75,22 @@ public class ArrayListDemo<E> implements ListDemo<E> {
 
     @Override
     public boolean addAll(int index, CollectionDemo<? extends E> collection) {
-        if (collection.size() == 0) {
+        int collectionSize = collection.size();
+        if (collectionSize == 0) {
             return false;
         }
 
-        int size = collection.size();
-        int emptyNum = data.length - this.size;
-        if (size > emptyNum) {
-            grow(data.length + (size - emptyNum - (this.size - index)));
-        }
+        checkIndex(index);
 
-        System.arraycopy(collection.toArray(), 0, this.data, this.size, size);
+        int size = this.size + collectionSize;
+        Object[] newData = new Object[size];
+
+        System.arraycopy(data, 0, newData, 0, index);
+        System.arraycopy(collection.toArray(), 0, newData, index, collectionSize);
+        System.arraycopy(data, index, newData, index + collectionSize, this.size - index);
+
+        this.data = newData;
+        this.size = size;
         return true;
     }
 
@@ -229,19 +234,7 @@ public class ArrayListDemo<E> implements ListDemo<E> {
 
     @Override
     public String toString() {
-        StringBuilder str = new StringBuilder("[");
-
-        if (size > 0) {
-            int index = 0;
-            while (size > 1 && index < size - 1) {
-                str.append(data[index++])
-                        .append(", ");
-            }
-            str.append(data[size - 1]);
-        }
-
-        return str.append("]")
-                .toString();
+        return "ArrayListDemo" + Arrays.toString(toArray());
     }
 
     private void checkIndex(int index) {
