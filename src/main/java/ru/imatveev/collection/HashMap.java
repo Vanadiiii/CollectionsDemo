@@ -1,16 +1,13 @@
 package ru.imatveev.collection;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
 public class HashMap<K, V> implements Map<K, V> {
     private static final int DEFAULT_INITIAL_CAPACITY = 16;
     private int size;
-    private int bucketCount;
     private Node<K, V>[] nodes;
 
     public HashMap(int initialCapacity) {
@@ -38,8 +35,7 @@ public class HashMap<K, V> implements Map<K, V> {
     @Override
     public boolean containsKey(Object key) {
         if (size != 0) {
-            int hash = hash(key);
-            int index = (nodes.length - 1) & hash;
+            int index = getIndex(key);
             Node<K, V> node = nodes[index];
 
             if (node != null) {
@@ -61,12 +57,22 @@ public class HashMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsValue(Object value) {
+        for (Entry<K, V> entry : entrySet()) {
+            if (Objects.equals(value, entry.getValue())) {
+                return true;
+            }
+        }
         return false;
     }
 
     @Override
-    public V get(Object value) {
-        return null;
+    public V get(Object key) {
+        int index = getIndex(key);
+        Node<K, V> node = nodes[index];
+        while (node != null && !Objects.equals(node.getKey(), key)) {
+            node = node.next;
+        }
+        return (node == null) ? null : node.getValue();
     }
 
     @Override
@@ -81,7 +87,6 @@ public class HashMap<K, V> implements Map<K, V> {
 
         if (nodes[index] == null) {
             nodes[index] = node;
-            bucketCount++;
         } else {
             Node<K, V> parentNode = nodes[index];
             while (parentNode.next != null) {
@@ -94,41 +99,59 @@ public class HashMap<K, V> implements Map<K, V> {
     }
 
     @Override
-    public V remove(Object value) {
-        return null;
+    public V remove(Object key) {
+        int index = getIndex(key);
+        Node<K, V> node = nodes[index];
+        Node<K, V> parentNode = null;
+
+        while (node != null && !Objects.equals(node.getKey(), key)) {
+            parentNode = node;
+            node = node.next;
+        }
+
+        if (parentNode == null) {
+            nodes[index] = null;
+        } else {
+            parentNode.next = (node == null) ? null : node.next;
+        }
+
+        return (node == null) ? null : node.getValue();
     }
 
     @Override
     public void putAll(Map<? extends K, ? extends V> map) {
-        map.entrySet().forEach(entry -> put(entry.getKey(), entry.getValue()));
+        for (Entry<? extends K, ? extends V> entry : map.entrySet()) {
+            this.put(entry.getKey(), entry.getValue());
+        }
     }
 
     @Override
     public void clear() {
         nodes = new Node[DEFAULT_INITIAL_CAPACITY];
-        bucketCount = 0;
         size = 0;
     }
 
     @Override
     public Set<K> keySet() {
-        return entrySet()
-                .stream()
-                .map(Entry::getKey)
-                .collect(Collectors.toSet());
+        Set<K> keySet = new HashSet<>(); //todo - replace by ru.imatveev.collection.Set
+        for (Entry<K, V> entry : entrySet()) {
+            keySet.add(entry.getKey());
+        }
+        return keySet;
     }
 
     @Override
     public Collection<V> values() {
-        return entrySet()
-                .stream()
-                .map(Entry::getValue)
-                .collect(Collectors.toList());
+        Collection<V> values = new ArrayList<>();
+        for (Entry<K, V> entry : entrySet()) {
+            values.add(entry.getValue());
+        }
+        return values;
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        Set<Entry<K, V>> entrySet = new HashSet<>(); //so funny
+        Set<Entry<K, V>> entrySet = new HashSet<>(); //todo - replace by ru.imatveev.collection.Set
 
         for (Node<K, V> node : nodes) {
             if (node != null) {
@@ -148,22 +171,16 @@ public class HashMap<K, V> implements Map<K, V> {
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder("HashMap{");
-        for (int i = 0; i < bucketCount; i++) {
-            Node<K, V> node = nodes[i];
-            str.append(node)
-                    .append(";");
 
-            Node<K, V> parentNode = node;
-            while (parentNode.next != null) {
-                Node<K, V> next = parentNode.next;
-                str.append(next)
-                        .append(";");
-                parentNode = parentNode.next;
+        Set<Entry<K, V>> entries = entrySet();
+        if (!entries.isEmpty()) {
+            for (Entry<K, V> entry : entries) {
+                str.append(entry).append(";");
             }
+            str.deleteCharAt(str.length() - 1);
         }
-        return str.deleteCharAt(str.length() - 1)
-                .append("}")
-                .toString();
+
+        return str.append("}").toString();
     }
 
     private static class Node<K, V> implements Entry<K, V> {
@@ -234,5 +251,9 @@ public class HashMap<K, V> implements Map<K, V> {
         }
 
         nodes = newNodes;
+    }
+
+    private int getIndex(Object key) {
+        return (nodes.length - 1) & hash(key);
     }
 }
