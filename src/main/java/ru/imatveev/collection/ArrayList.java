@@ -1,6 +1,11 @@
 package ru.imatveev.collection;
 
+import ru.imatveev.collection.annotation.Complex;
+
 import java.util.Arrays;
+
+import static ru.imatveev.collection.annotation.Complex.Complexity.CONSTANT;
+import static ru.imatveev.collection.annotation.Complex.Complexity.LINEAR;
 
 @SuppressWarnings("unchecked")
 public class ArrayList<E> implements List<E> {
@@ -44,6 +49,7 @@ public class ArrayList<E> implements List<E> {
     }
 
     @Override
+    @Complex(CONSTANT)
     public boolean add(E element) {
         if (size == 0 && data.length == 0) {
             data = new Object[10];
@@ -53,7 +59,24 @@ public class ArrayList<E> implements List<E> {
         }
 
         data[size] = element;
-        size = size + 1;
+        ++size;
+        return true;
+    }
+
+    @Override
+    @Complex(LINEAR)
+    public boolean add(int index, E element) {
+        if (size == 0 && data.length == 0) {
+            data = new Object[10];
+        }
+        if (size == data.length) {
+            grow((int) (1.5 * data.length));
+        }
+
+        System.arraycopy(data, index, data, index + 1, size - index);
+        data[index] = element;
+        ++size;
+
         return true;
     }
 
@@ -164,6 +187,7 @@ public class ArrayList<E> implements List<E> {
     }
 
     @Override
+    @Complex(LINEAR)
     public int indexOf(Object element) {
         if (size == 0) {
             return -1;
@@ -177,6 +201,7 @@ public class ArrayList<E> implements List<E> {
     }
 
     @Override
+    @Complex(LINEAR)
     public int lastIndexOf(Object element) {
         if (size == 0) {
             return -1;
@@ -217,6 +242,7 @@ public class ArrayList<E> implements List<E> {
     }
 
     @Override
+    @Complex(LINEAR)
     public boolean contains(Object element) {
         return indexOf(element) >= 0;
     }

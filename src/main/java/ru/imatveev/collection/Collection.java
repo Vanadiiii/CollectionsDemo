@@ -7,7 +7,9 @@ public interface Collection<E> {
 
     boolean contains(Object element);
 
-    boolean add(E var1);
+    boolean add(E element);
+
+    boolean add(int index, E element);
 
     boolean remove(Object element);
 

@@ -1,7 +1,12 @@
 package ru.imatveev.collection;
 
+import ru.imatveev.collection.annotation.Complex;
+
 import java.util.Arrays;
 import java.util.Objects;
+
+import static ru.imatveev.collection.annotation.Complex.Complexity.CONSTANT;
+import static ru.imatveev.collection.annotation.Complex.Complexity.LINEAR;
 
 @SuppressWarnings("unchecked")
 public class LinkedList<E> implements List<E> {
@@ -36,14 +41,31 @@ public class LinkedList<E> implements List<E> {
     }
 
     @Override
+    @Complex(CONSTANT)
     public boolean add(E element) {
         Node<E> node = new Node<>(element);
-        Node<E> penult = last.prev; // предпоследний
+        Node<E> penult = last.prev; // 'penult' means 'before last'
 
         last.prev = node;
         penult.next = node;
         node.prev = penult;
         node.next = last;
+
+        ++size;
+        return true;
+    }
+
+    @Override
+    @Complex(LINEAR)
+    public boolean add(int index, E element) {
+        Node<E> node = new Node<>(element);
+        Node<E> nextNode = getNode(index);
+        Node<E> prevNode = nextNode.prev;
+
+        node.prev = prevNode;
+        node.next = nextNode;
+        nextNode.prev = node;
+        prevNode.next = node;
 
         ++size;
         return true;
@@ -160,6 +182,7 @@ public class LinkedList<E> implements List<E> {
         return value;
     }
 
+    @Complex(LINEAR)
     private Node<E> getNode(int index) {
         checkIndex(index);
 
@@ -185,16 +208,26 @@ public class LinkedList<E> implements List<E> {
     }
 
     @Override
+    @Complex(LINEAR)
     public E get(int index) {
         return getNode(index).element;
     }
 
     @Override
+    @Complex(LINEAR)
     public E remove(int index) {
-        return null;
+        Node<E> node = getNode(index);
+        Node<E> prev = node.prev;
+        Node<E> next = node.next;
+
+        next.prev = prev;
+        prev.next = next;
+
+        return node.element;
     }
 
     @Override
+    @Complex(LINEAR)
     public int indexOf(Object element) {
         Node<E> node = first;
         int index = 0;
